@@ -67,12 +67,21 @@ const headers = {
   contentSecurityPolicy: {
     directives: {
       'default-src': `'self'`,
-      styleSrc: ["'self'"],
+      styleSrc: [
+        "'self'",
+        'https://fonts.googleapis.com',
+        'https://fonts.gstatic.com',
+      ],
       scriptSrc: ["'self'", 'https://appssdk.zoom.us/sdk.min.js'],
-      imgSrc: ["'self'", `https://${redirectHost}`],
-      'connect-src': 'self',
+      imgSrc: ["'self'", `https://${redirectHost}`, `https://*`],
+      'connect-src': ['self', 'https://*', 'wss://*'],
       'base-uri': 'self',
       'form-action': 'self',
+      'font-src': [
+        "'self'",
+        'https://fonts.gstatic.com',
+        'https://fonts.googleapis.com',
+      ],
     },
   },
 };
@@ -93,7 +102,7 @@ app.use(express.static(staticDir));
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
 
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 app.use((err, req, res, next) => {
   const status = err.status || 500;
   const title = `Error ${err.status}`;

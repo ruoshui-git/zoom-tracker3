@@ -1,47 +1,72 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  import zoomSdk from '@zoom/appssdk';
+
+  import Router, { push, replace } from 'svelte-spa-router';
+
+  import { onMount } from 'svelte';
+  import ParticipantList from './components/tracker/ParticipantList.svelte';
+  import { entranceEvents, userRole } from './stores/zoom';
+  import TrackerRouter from './components/tracker/TrackerRouter.svelte';
+  import Install from './components/Install.svelte';
+  import Client from './components/Client.svelte';
+  import { get } from 'svelte/store';
+
+  let context: string;
+  let isZoom = false;
+  let isMainClient: boolean;
+
+  onMount(async () => {
+      try {
+          const configResponse = await zoomSdk.config({
+              size: { width: 480, height: 360 },
+              capabilities: [
+                  'getMeetingUUID',
+                  'getMeetingParticipants',
+                  'onParticipantChange',
+                  'getUserContext',
+              ],
+          });
+
+          isZoom = true;
+
+          context = configResponse.runningContext;
+          console.debug('Zoom JS SDK Configuration', configResponse);
+
+          isMainClient = context === 'inMainClient';
+
+          zoomSdk.onParticipantChange(
+              (e) => ($entranceEvents = [...$entranceEvents, e])
+          );
+
+
+          if (isMainClient) {
+              replace('/client');
+          } else if (isZoom) {
+              replace('/tracker');
+          }
+
+          const userContextRes = await zoomSdk.getUserContext();
+          userRole.set(userContextRes.role);
+          console.log(get(userRole));
+      } catch (e) {
+          console.error(e);
+      }
+  });
+
+  $: console.log(`Context: ${context}`);
+
+  const routes = {
+      '/tracker/': TrackerRouter,
+      '/tracker/*': TrackerRouter, 
+      '/client/': Client,
+      '/*': Install,
+  };
+  // import TodoList from '../components/Todo/List.vue';
+  // import { computed } from 'vue';
 </script>
 
 <main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Tracker V3</h1>
+  <h1>Zoom考勤 V3</h1>
 
-  <div class="card">
-    <Counter />
-  </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+  <Router {routes} />
 </main>
-
-<style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
-</style>
