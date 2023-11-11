@@ -39,43 +39,30 @@
       console.debug('Zoom JS SDK Configuration', configResponse);
 
       isMainClient = context === 'inMainClient';
-
-      /* 
-      {
-  "timestamp": 1614831950,
-  "participants": [
-    {
-      "status": "join",
-      "screenName": "xxxxx",
-      "participantUUID": "xxxxxxx"
-      "role": "attendee"
-    }
-  ]
-}
-      */
-      $participantsJoinedBefore = (
-        await zoomSdk.getMeetingParticipants()
-      ).participants.map((p) => {
-        return {
-          timestamp: DateTime.now(),
-          status: 'joined-before',
-          user: new ZoomUser(p.participantUUID, p.screenName, p.role),
-        };
-      });
-
-      zoomSdk.onParticipantChange(
-        (e) => ($entranceEvents = [...$entranceEvents, e])
-      );
-
       if (isMainClient) {
         replace('/client');
       } else if (isZoom) {
+        
+        $participantsJoinedBefore = (
+          await zoomSdk.getMeetingParticipants()
+        ).participants.map((p) => {
+          return {
+            timestamp: DateTime.now(),
+            status: 'joined-before',
+            user: new ZoomUser(p.participantUUID, p.screenName, p.role),
+          };
+        });
+
+        zoomSdk.onParticipantChange(
+          (e) => ($entranceEvents = [...$entranceEvents, e])
+        );
+
+        const userContextRes = await zoomSdk.getUserContext();
+        userRole.set(userContextRes.role);
+        console.log(get(userRole));
+
         replace('/tracker');
       }
-
-      const userContextRes = await zoomSdk.getUserContext();
-      userRole.set(userContextRes.role);
-      console.log(get(userRole));
     } catch (e) {
       console.error(e);
     }

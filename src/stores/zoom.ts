@@ -45,11 +45,3 @@ export const entranceHistory: Readable<EntranceHistoryItem[]> = derived(
 );
 
 export const userRole: Writable<string> = writable('');
-
-export interface ParticipantHistoryListItem {
-  timestamp: DateTime;
-  participants: ZoomUser[];
-}
-
-export const participantListHistory: Writable<ParticipantHistoryListItem[]> =
-  writable([]);

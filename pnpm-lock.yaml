@@ -23,6 +23,9 @@ dependencies:
   debug:
     specifier: ^4.3.4
     version: 4.3.4
+  dexie:
+    specifier: 4.0.1-beta.1
+    version: 4.0.1-beta.1
   express:
     specifier: ^4.18.2
     version: 4.18.2
@@ -73,8 +76,14 @@ devDependencies:
   '@smui/data-table':
     specifier: ^7.0.0-beta.15
     version: 7.0.0-beta.15(svelte@4.2.2)(typescript@5.2.2)
+  '@smui/drawer':
+    specifier: 7.0.0-beta.15
+    version: 7.0.0-beta.15(svelte@4.2.2)(typescript@5.2.2)
   '@smui/icon-button':
     specifier: ^7.0.0-beta.15
+    version: 7.0.0-beta.15(svelte@4.2.2)(typescript@5.2.2)
+  '@smui/list':
+    specifier: 7.0.0-beta.15
     version: 7.0.0-beta.15(svelte@4.2.2)(typescript@5.2.2)
   '@smui/paper':
     specifier: 7.0.0-beta.15
@@ -638,7 +647,6 @@ packages:
       '@material/theme': 14.0.0
       '@material/typography': 14.0.0
       tslib: 2.6.2
-    dev: false
 
   /@material/elevation@14.0.0:
     resolution: {integrity: sha512-Di3tkxTpXwvf1GJUmaC8rd+zVh5dB2SWMBGagL4+kT8UmjSISif/OPRGuGnXs3QhF6nmEjkdC0ijdZLcYQkepw==}
@@ -1272,7 +1280,6 @@ packages:
     transitivePeerDependencies:
       - svelte
       - typescript
-    dev: false
 
   /@smui/fab@7.0.0-beta.15(svelte@4.2.2)(typescript@5.2.2):
     resolution: {integrity: sha512-mO7hscDVA4YslTtB4dxWLNkxl1U/ZKSskglLNKrFWvjCd/MiOSVZSyMODkGnLaeQFMfgGus7moGqS+nY+hvvsQ==}
@@ -2318,6 +2325,10 @@ packages:
     resolution: {integrity: sha512-reYkTUJAZb9gUuZ2RvVCNhVHdg62RHnJ7WJl8ftMi4diZ6NWlciOzQN88pUhSELEwflJht4oQDv0F0BMlwaYtA==}
     engines: {node: '>=8'}
     dev: true
+
+  /dexie@4.0.1-beta.1:
+    resolution: {integrity: sha512-+IAkY8U09pavDFecWFOfTkwVN3NTmIsWZN2wh+RQ+9ya35Kr6AicQp+Tt1NDCM4UG2P/PDFBq/Mp4dt151LmuQ==}
+    dev: false
 
   /dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}

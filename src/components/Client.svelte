@@ -1,3 +1,6 @@
-<p>
-    目前只能在Zoom房间中使用此软件。请点击右上角进入Zoom房间后开启此软件。
-</p>
+<script>
+  import RosterRecordsPage from './mainClient/RosterRecordsPage.svelte';
+</script>
+
+<p>目前只能在Zoom房间中使用此软件。请点击右上角进入Zoom房间后开启此软件。</p>
+<RosterRecordsPage />

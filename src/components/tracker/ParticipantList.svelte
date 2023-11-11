@@ -13,19 +13,19 @@
   import IconButton from '@smui/icon-button';
   import ZoomUser, { filterUsersByName } from '../../lib/zoomUser';
   import FilterInput from '../FilterInput.svelte';
-  import {
-    participantListHistory,
-    type ParticipantHistoryListItem,
-  } from '../../stores/zoom';
   import { onMount } from 'svelte';
+  import { db, type RosterRecord } from '../../database/db';
+  import { liveQuery } from 'dexie';
 
   let error: string;
-  let currentList: ParticipantHistoryListItem | undefined;
+  let currentRoster: RosterRecord | undefined;
+  $: lastRoster = liveQuery(() => db.rosterRecords.orderBy('id').last());
 
   onMount(() => {
-    console.log("mounting");
-    if ($participantListHistory) {
-      currentList = $participantListHistory[$participantListHistory.length - 1];
+    console.log('mounting');
+    console.log()
+    if ($lastRoster) {
+      currentRoster = $lastRoster;
       handleSort();
     }
   });
@@ -37,13 +37,16 @@
           return new ZoomUser(res.participantUUID, res.screenName, res.role);
         }
       );
-      participantListHistory.update((h) => [
-        ...h,
-        { timestamp: DateTime.now(), participants: record },
-      ]);
-      currentList = $participantListHistory[$participantListHistory.length - 1];
-      error = '';
+      const time = DateTime.now();
+      const newRoster = {
+        timestamp: time,
+        id: time.toLocal().toString(),
+        participants: record,
+      };
+      currentRoster = newRoster;
       handleSort();
+      await db.rosterRecords.add(newRoster);
+      error = '';
     } catch (e: any) {
       error = JSON.stringify(e);
       if (e.code === '10047') {
@@ -54,7 +57,7 @@
   };
 
   function handleSort() {
-    currentList?.participants.sort((a, b) => {
+    currentRoster?.participants.sort((a, b) => {
       const [aVal, bVal] = [a[sort], b[sort]][
         sortDirection === 'ascending' ? 'slice' : 'reverse'
       ]();
@@ -69,23 +72,22 @@
   let sortDirection: Lowercase<keyof typeof SortValue> = 'ascending';
   let filterName: string = '';
 
-  $: filteredParticipants = currentList? filterUsersByName(
-    currentList.participants,
-    filterName
-  ): [];
+  $: filteredParticipants = currentRoster
+    ? filterUsersByName(currentRoster.participants, filterName)
+    : [];
 </script>
 
 <button on:click={getParticipants}> 获取名单 </button>
 
 {#if error}
   <p class="error">错误：{error}</p>
-{:else if currentList}
+{:else if currentRoster}
   <br />
   <br />
 
   <FilterInput bind:filterName />
 
-  <p>最后更新: {currentList.timestamp.toLocal().toString()}</p>
+  <p>最后更新: {currentRoster.timestamp.toLocal().toString()}</p>
   <p>注：名单中不包括等候室 (Waiting Room) 人员</p>
 
   <DataTable
