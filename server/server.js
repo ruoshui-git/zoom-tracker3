@@ -1,7 +1,7 @@
 import http from 'http';
 import debug from 'debug';
 import { appName } from '../config.js';
-// import ViteExpress from 'vite-express';
+import ViteExpress from 'vite-express';
 
 const dbg = debug(`${appName}:http`);
 
@@ -40,8 +40,7 @@ export async function start(app, port) {
     }
   });
 
-  //   ViteExpress.bind(app, server);
-
+  await ViteExpress.bind(app, server);
   // Listen on provided port, on all network interfaces
   return server.listen(port);
 }

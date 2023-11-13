@@ -8,7 +8,8 @@ import logger from 'morgan';
 import { dirname } from 'path';
 import { fileURLToPath, URL } from 'url';
 
-import { start } from './server/server.js';
+import ViteExpress from 'vite-express';
+
 import indexRoutes from './server/routes/index.js';
 import authRoutes from './server/routes/auth.js';
 
@@ -71,10 +72,11 @@ const headers = {
         "'self'",
         'https://fonts.googleapis.com',
         'https://fonts.gstatic.com',
+        process.env.NODE_ENV !== 'production' ? `'unsafe-inline'` : undefined,
       ],
       scriptSrc: ["'self'", 'https://appssdk.zoom.us/sdk.min.js'],
       imgSrc: ["'self'", `https://${redirectHost}`, `https://*`],
-      'connect-src': ['self', 'https://*', 'wss://*'],
+      'connect-src': ['self', 'https:', 'wss:'],
       'base-uri': 'self',
       'form-action': 'self',
       'font-src': [
@@ -119,12 +121,19 @@ app.use((err, req, res, next) => {
 });
 
 // redirect users to the home page if they get a 404 route
-app.get('*', (req, res) => res.redirect('/'));
+// app.get('*', (req, res) => res.redirect('/'));
 
 // start serving
-start(app, port).catch(async (e) => {
+// start(app, port).catch(async (e) => {
+//   console.error(e);
+//   process.exit(1);
+// });
+
+try {
+  ViteExpress.listen(app, port);
+} catch (e) {
   console.error(e);
   process.exit(1);
-});
+}
 
 export default app;

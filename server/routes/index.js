@@ -28,6 +28,7 @@ router.get('/', async (req, res, next) => {
       //     title: `Hello Browser`,
       // });
       return res.sendFile('dist/index.html');
+      // next();
     }
 
     // Check if the context is valid and not expired
@@ -40,6 +41,14 @@ router.get('/', async (req, res, next) => {
     //     title: `Hello Zoom`,
     // });
     return res.sendFile('dist/index.html');
+
+    // const indexPath = findClosestIndexToRoot(req.path, config.root);
+    // if (indexPath === undefined) return next();
+
+    // const template = fs.readFileSync(indexPath, "utf8");
+    // const html = await server.transformIndexHtml(req.originalUrl, template);
+    // res.send(getTransformedHTML(html, req));
+    // next();
   } catch (e) {
     next(handleError(e));
   }

@@ -13,11 +13,11 @@ const { result } = concurrently([
     name: 'dev-server',
     prefixColor: 'inverse.cyan',
   },
-  {
-    command: `vite`,
-    name: 'dev-app',
-    prefixColor: 'inverse.yellow',
-  },
+  // {
+  //   command: `vite`,
+  //   name: 'dev-app',
+  //   prefixColor: 'inverse.yellow',
+  // },
 ]);
 
 result.catch((e) => console.error(e));
