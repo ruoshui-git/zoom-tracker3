@@ -4,8 +4,31 @@
 </script>
 
 <p>时间：{roster.timestamp.toISO()?.toString().replace('T', '  ')}</p>
-<ol>
-  {#each roster.participants as p}
-    <li>{p.screenName}</li>
-  {/each}
-</ol>
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">序号</th>
+      <th scope="col">姓名</th>
+      <th scope="col">地点</th>
+    </tr>
+  </thead>
+  <tbody>
+    {#each roster.participants as item, i}
+      <tr>
+        <td>{i + 1}</td>
+        <td>{item.participant.screenName}</td>
+        <td>{item.location === 'meeting' ? 'Zoom房间' : '等候室'}</td>
+      </tr>
+    {/each}
+  </tbody>
+</table>
+
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid;
+    padding: 5px;
+  }
+</style>

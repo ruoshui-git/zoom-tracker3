@@ -46,7 +46,12 @@ export const userRole: Writable<string> = writable('');
 
 export interface RosterRecord {
   timestamp: DateTime;
-  participants: ZoomUser[];
+  participants: RosterItem[];
+}
+
+export interface RosterItem {
+  location: 'meeting' | 'waiting-room';
+  participant: ZoomUser;
 }
 
 export interface TrackerAppData {

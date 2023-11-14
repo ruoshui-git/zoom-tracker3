@@ -1,26 +1,47 @@
 <script lang="ts">
   import zoomSdk from '@zoom/appssdk';
-  import ZoomUser from '../../lib/zoomUser';
+  import ZoomUser, { WaitingRoomUser } from '../../lib/zoomUser';
   import { DateTime } from 'luxon';
-  import { trackerData } from '../../stores/zoom';
+  import { trackerData, type RosterItem } from '../../stores/zoom';
 
   let error: string = '';
 
   const getParticipants = async () => {
     try {
       console.log('Getting Roster Records');
-      const record = (await zoomSdk.getMeetingParticipants()).participants.map(
-        (res) => {
-          return new ZoomUser(res.participantUUID, res.screenName, res.role);
-        }
-      );
+      let usersInMeeting: RosterItem[] = (
+        await zoomSdk.getMeetingParticipants()
+      ).participants.map((res) => {
+        return {
+          participant: new ZoomUser(
+            res.participantUUID,
+            res.screenName,
+            res.role
+          ),
+          location: 'meeting',
+        };
+      });
+
+      const usersInWaitingRoom: RosterItem[] = (
+        await zoomSdk.getWaitingRoomParticipants()
+      ).participants.map((res) => {
+        return {
+          location: 'waiting-room',
+          participant: new WaitingRoomUser(
+            res.participantUUID,
+            res.screenName,
+            res.role
+          ),
+        };
+      });
+
       if ($trackerData) {
         const d = $trackerData;
         $trackerData.rosterRecords = [
           ...$trackerData.rosterRecords,
           {
             timestamp: DateTime.now(),
-            participants: record,
+            participants: [...usersInWaitingRoom, ...usersInMeeting],
           },
         ];
       }

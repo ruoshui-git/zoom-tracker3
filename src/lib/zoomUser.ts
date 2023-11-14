@@ -64,3 +64,16 @@ export function filterEntranceHistoryByName(
     return history;
   }
 }
+
+export class WaitingRoomUser extends ZoomUser {
+  static counter = 0;
+
+  constructor(participantUUID?: string, screenName?: string, role?: string) {
+    const label = `等候室用户 #${WaitingRoomUser.counter++}`;
+    super(
+      participantUUID ? participantUUID : label,
+      screenName ? screenName : label,
+      role ? role : label
+    );
+  }
+}
