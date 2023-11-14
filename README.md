@@ -1,4 +1,17 @@
-# Zoom Apps JavaScript Sample
+# Zoom Tracker 3
+
+TODO:
+
+Client:
+1. Actual routing
+
+
+Meeting:
+1. collpase section when not using
+
+Common:
+1. filter & sort data
+
 
 This Zoom App Sample uses Node.js + Express to build a simple Hello World Zoom App.
 

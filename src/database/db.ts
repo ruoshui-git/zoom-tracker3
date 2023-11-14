@@ -1,22 +1,17 @@
 import Dexie, { type Table } from 'dexie';
-import type { DateTime } from 'luxon';
-import type ZoomUser from '../lib/zoomUser';
-
-export interface RosterRecord {
-  id: string;
-  timestamp: DateTime;
-  participants: ZoomUser[];
-}
+import type { TrackerAppData } from '../stores/zoom';
 
 export class MySubClassedDexie extends Dexie {
   // 'rosterRecords' is added by dexie when declaring the stores()
   // We just tell the typing system this is the case
-  rosterRecords!: Table<RosterRecord>;
+  trackerDataTb!: Table<TrackerAppData>;
 
   constructor() {
     super('trackerDatabase');
-    this.version(1).stores({
-      rosterRecords: 'id', // Primary key and indexed props
+    this.version(2).stores({
+      trackerDataTb:
+        '++id, startTimeStr, endTimeStr, [id+startTimeStr+endTimeStr]', // Primary key and indexed props
+      rosterRecords: null,
     });
   }
 }

@@ -8,5 +8,8 @@ export default defineConfig({
       'Content-Security-Policy': `style-src 'unsafe-inline' 'self'`,
     },
   },
+  build: {
+    minify: false,
+  },
   plugins: [svelte()],
 });

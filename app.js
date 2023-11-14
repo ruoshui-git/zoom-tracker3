@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import logger from 'morgan';
 import { dirname } from 'path';
 import { fileURLToPath, URL } from 'url';
+import cors from 'cors';
 
 import ViteExpress from 'vite-express';
 
@@ -20,6 +21,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 /* App Config */
 const app = express();
 const dbg = debug(`${appName}:app`);
+
+app.use(cors());
 
 const redirectHost = new URL(redirectUri).host;
 
@@ -72,6 +75,7 @@ const headers = {
         "'self'",
         'https://fonts.googleapis.com',
         'https://fonts.gstatic.com',
+        'https://1.www.s81c.com',
         process.env.NODE_ENV !== 'production' ? `'unsafe-inline'` : undefined,
       ],
       scriptSrc: ["'self'", 'https://appssdk.zoom.us/sdk.min.js'],
@@ -83,6 +87,7 @@ const headers = {
         "'self'",
         'https://fonts.gstatic.com',
         'https://fonts.googleapis.com',
+        'https://1.www.s81c.com',
       ],
     },
   },
@@ -121,7 +126,7 @@ app.use((err, req, res, next) => {
 });
 
 // redirect users to the home page if they get a 404 route
-// app.get('*', (req, res) => res.redirect('/'));
+app.get('*', (req, res) => res.redirect('/'));
 
 // start serving
 // start(app, port).catch(async (e) => {

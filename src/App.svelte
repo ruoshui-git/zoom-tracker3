@@ -4,21 +4,13 @@
   import Router, { push, replace } from 'svelte-spa-router';
 
   import { onMount } from 'svelte';
-  import ParticipantList from './components/tracker/ParticipantList.svelte';
-  import {
-    entranceEvents,
-    userRole,
-    participantsJoinedBefore,
-  } from './stores/zoom';
-  import TrackerRouter from './components/tracker/TrackerRouter.svelte';
+  import { userRole } from './stores/zoom';
+  import Meeting from './components/meeting/Meeting.svelte';
   import Install from './components/Install.svelte';
-  import Client from './components/Client.svelte';
-  import { get } from 'svelte/store';
-  import ZoomUser from './lib/zoomUser';
-  import { DateTime } from 'luxon';
+  import Client from './components/mainClient/Client.svelte';
 
   let context: string;
-  let isZoom = false;
+  let isZoom: boolean | undefined = undefined;
   let isMainClient: boolean;
 
   onMount(async () => {
@@ -30,6 +22,10 @@
           'getMeetingParticipants',
           'onParticipantChange',
           'getUserContext',
+          'onActiveSpeakerChange',
+          'onConnect',
+          'onMeeting',
+          'openUrl',
         ],
       });
 
@@ -42,28 +38,13 @@
       if (isMainClient) {
         replace('/client');
       } else if (isZoom) {
-        
-        $participantsJoinedBefore = (
-          await zoomSdk.getMeetingParticipants()
-        ).participants.map((p) => {
-          return {
-            timestamp: DateTime.now(),
-            status: 'joined-before',
-            user: new ZoomUser(p.participantUUID, p.screenName, p.role),
-          };
-        });
-
-        zoomSdk.onParticipantChange(
-          (e) => ($entranceEvents = [...$entranceEvents, e])
-        );
-
         const userContextRes = await zoomSdk.getUserContext();
         userRole.set(userContextRes.role);
-        console.log(get(userRole));
 
         replace('/tracker');
       }
     } catch (e) {
+      isZoom = false;
       console.error(e);
     }
   });
@@ -71,17 +52,27 @@
   $: console.log(`Context: ${context}`);
 
   const routes = {
-    '/tracker/': TrackerRouter,
-    '/tracker/*': TrackerRouter,
+    '/tracker/': Meeting,
+    '/tracker/*': Meeting,
     '/client/': Client,
+    '/client/*': Client,
     '/*': Install,
   };
-  // import TodoList from '../components/Todo/List.vue';
-  // import { computed } from 'vue';
 </script>
 
 <main>
   <h1>Zoom考勤 V3</h1>
 
-  <Router {routes} />
+  {#if isZoom !== undefined}
+    <Router {routes} />
+  {:else}
+    <p>正在获取环境信息。请稍等……</p>
+  {/if}
 </main>
+
+<style>
+  main {
+    text-align: center;
+    padding: 10px;
+  }
+</style>

@@ -11,10 +11,10 @@
     SortValue,
   } from '@smui/data-table';
   import IconButton from '@smui/icon-button';
-  import ZoomUser, { filterUsersByName } from '../../lib/zoomUser';
-  import FilterInput from '../FilterInput.svelte';
+  import ZoomUser, { filterUsersByName } from '../../../lib/zoomUser';
+  import FilterInput from '../../FilterInput.svelte';
   import { onMount } from 'svelte';
-  import { db, type RosterRecord } from '../../database/db';
+  import { db, type RosterRecord } from '../../../database/db';
   import { liveQuery } from 'dexie';
 
   let error: string;

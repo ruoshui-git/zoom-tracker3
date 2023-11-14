@@ -8,9 +8,9 @@
     SortValue,
   } from '@smui/data-table';
 
-  import { entranceHistory } from '../../stores/zoom';
-  import { filterEntranceHistoryByName } from '../../lib/zoomUser';
-  import FilterInput from '../FilterInput.svelte';
+  import { entranceHistory } from '../../../stores/zoom';
+  import { filterEntranceHistoryByName } from '../../../lib/zoomUser';
+  import FilterInput from '../../FilterInput.svelte';
 
 
   let filterName = '';
