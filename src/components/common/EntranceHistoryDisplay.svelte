@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { DateTime } from 'luxon';
   import type { EntranceHistoryItem } from '../../stores/zoom';
   export let entranceHistory: EntranceHistoryItem[];
 </script>
@@ -15,7 +14,7 @@
   {#each entranceHistory as e, i}
     <tr>
       <th scope="row">{i + 1}</th>
-      <td>{e.timestamp.toLocal().toISO()?.toString().replace('T', '  ')}</td>
+      <td>{e.timestamp}</td>
       <td>{e.user.screenName}</td>
       <td
         >{e.status === 'join'

@@ -1,8 +1,11 @@
 <script lang="ts">
   import Drawer, { AppContent, Content } from '@smui/drawer';
   import List, { Item, Text } from '@smui/list';
+  import { classMap } from '@smui/common/internal';
   import type { RosterRecord } from '../../stores/zoom';
   import RosterDisplay from './RosterDisplay.svelte';
+  import { filterUsersByName } from '../../lib/zoomUser';
+  import FilterInput from '../FilterInput.svelte';
 
   export let rosters: RosterRecord[];
   let currentIndex: number | undefined;
@@ -12,9 +15,24 @@
       currentIndex = rosters.length - 1;
     }
   }
+
+  let filterName = '';
+
+  $: filteredRoster =
+    currentIndex === undefined || rosters.length === 0
+      ? undefined
+      : ({
+          timestamp: rosters[currentIndex].timestamp,
+          participants: filterUsersByName(
+            rosters[currentIndex].participants,
+            filterName
+          ),
+        } as RosterRecord);
 </script>
 
 <h3>人员记录列表</h3>
+
+<FilterInput bind:filterName />
 
 <label>
   <input
@@ -26,7 +44,7 @@
 </label>
 
 <div class="drawer-container">
-  <Drawer>
+  <Drawer class={classMap({ 'my-resizable-bar': true })}>
     <Content>
       <List>
         {#each rosters as roster, i}
@@ -36,9 +54,7 @@
               currentIndex = i;
             }}
           >
-            <Text
-              >{roster.timestamp.toISO()?.toString().replace('T', '  ')}</Text
-            >
+            <Text>{roster.timestamp}</Text>
           </Item>
         {:else}
           <p>暂无人名记录。</p>
@@ -49,8 +65,8 @@
 
   <AppContent class="app-content">
     <main class="main-content">
-      {#if currentIndex !== undefined}
-        <RosterDisplay roster={rosters[currentIndex]} />
+      {#if currentIndex !== undefined && filteredRoster !== undefined}
+        <RosterDisplay roster={filteredRoster} />
       {:else if rosters.length !== 0}
         <p>暂未选择名单。</p>
       {/if}
@@ -70,6 +86,7 @@
       var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));
     overflow: hidden;
     z-index: 0;
+    /* resize: horizontal; */
   }
 
   * :global(.app-content) {
@@ -84,5 +101,9 @@
     padding: 16px;
     height: 100%;
     box-sizing: border-box;
+  }
+
+  :global(.my-resizable-bar) {
+    resize: horizontal;
   }
 </style>

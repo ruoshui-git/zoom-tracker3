@@ -11,37 +11,69 @@
       console.log('Getting Roster Records');
       let usersInMeeting: RosterItem[] = (
         await zoomSdk.getMeetingParticipants()
-      ).participants.map((res) => {
-        return {
-          participant: new ZoomUser(
-            res.participantUUID,
-            res.screenName,
-            res.role
-          ),
-          location: 'meeting',
-        };
-      });
+      ).participants
+        .map((res) => {
+          return {
+            participant: new ZoomUser(
+              res.participantUUID,
+              res.screenName,
+              res.role
+            ),
+            location: 'meeting',
+          };
+        })
+        .toSorted((a, b) => {
+          if (a.location !== b.location) {
+            // 其中一个在等候室，一个在房间中
+            if (a.location === '等候室') {
+              // 等候室人员排在后面
+              return 1;
+            } else {
+              return -1;
+            }
+          } else {
+            return a.participant.screenNamePinyin.localeCompare(
+              b.participant.screenNamePinyin
+            );
+          }
+        }) as RosterItem[];
 
       const usersInWaitingRoom: RosterItem[] = (
         await zoomSdk.getWaitingRoomParticipants()
-      ).participants.map((res) => {
-        return {
-          location: 'waiting-room',
-          participant: new WaitingRoomUser(
-            res.participantUUID,
-            res.screenName,
-            res.role
-          ),
-        };
-      });
+      ).participants
+        .map((res) => {
+          return {
+            location: 'waiting-room',
+            participant: new WaitingRoomUser(
+              res.participantUUID,
+              res.screenName,
+              res.role
+            ),
+          };
+        })
+        .toSorted((a, b) => {
+          if (a.location !== b.location) {
+            // 其中一个在等候室，一个在房间中
+            if (a.location === '等候室') {
+              // 等候室人员排在后面
+              return 1;
+            } else {
+              return -1;
+            }
+          } else {
+            return a.participant.screenNamePinyin.localeCompare(
+              b.participant.screenNamePinyin
+            );
+          }
+        }) as RosterItem[];
 
       if ($trackerData) {
         const d = $trackerData;
         $trackerData.rosterRecords = [
           ...$trackerData.rosterRecords,
           {
-            timestamp: DateTime.now(),
-            participants: [...usersInWaitingRoom, ...usersInMeeting],
+            timestamp: DateTime.now().toLocal().toISO()!,
+            participants: [...usersInMeeting, ...usersInWaitingRoom],
           },
         ];
       }

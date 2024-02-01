@@ -8,8 +8,8 @@ export async function handleEndRecord() {
   const d = get(trackerData);
   if (d) {
     const now = DateTime.now();
-    d.endTime = now;
-    d.endTimeStr = now.toISO()?.toString();
+    // d.endTime = now;
+    d.endTime = now.toISO()!;
     await db.trackerDataTb.add(d);
     trackerData.set(null);
   }

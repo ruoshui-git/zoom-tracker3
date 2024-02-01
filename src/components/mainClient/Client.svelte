@@ -8,14 +8,28 @@
   import { handleEndRecord } from '../common/utils';
   import { liveQuery } from 'dexie';
   import { onMount } from 'svelte';
+  import Router, { link, params } from 'svelte-spa-router';
+  import active from 'svelte-spa-router/active';
+
+  import RecordsRouter from './RecordsRouter.svelte';
 
   let hasMeetingConnected = false;
 
-  const dbIndexes = liveQuery(() => {
-    return db.trackerDataTb.orderBy('[id+startTimeStr+endTimeStr]').keys();
+  const dbIndexes = liveQuery(async () => {
+    // return await db.trackerDataTb.toCollection().keys();
+    return await db.trackerDataTb.orderBy('[id+startTime+endTime]').keys();
   });
 
-  $: console.log($dbIndexes);
+  $: console.log(`dbindexes from Client.svelte: ${$dbIndexes}`);
+
+  // let dbRecord = liveQuery(async () => {
+  //   return db.trackerDataTb.get($params?.id);
+  //   // return db.trackerDataTb.get(1);
+  // });
+  // $: {
+  //   console.log(`dbrecord from Client.svelte: ${$dbRecord}`);
+  //   console.log(db);
+  // }
 
   let connectionStatus = '';
 
@@ -56,9 +70,45 @@
 <hr />
 <h2>前期记录</h2>
 {#if $dbIndexes && $dbIndexes.join('')}
-  {#each $dbIndexes as index}
-    <a href={index.toString()}>{JSON.stringify(index)}</a>
-  {/each}
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">开始时间</th>
+        <th scope="col">结束时间</th>
+      </tr>
+    </thead>
+    <tbody>
+      {#each $dbIndexes as [id, startTime, endTime]}
+        <tr>
+          <td><a href={`/client/records/${id}`} use:link use:active>{id}</a></td
+          >
+          <td><a href={`/client/records/${id}`} use:link use:active>{startTime}</a></td>
+          <td><a href={`/client/records/${id}`} use:link use:active>{endTime}</a></td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
 {:else}
   <p>暂无前期记录</p>
 {/if}
+
+<!-- {#if $dbRecord}
+  <TrackerDataDisplay trackerData={$dbRecord} />
+{/if} -->
+
+<RecordsRouter />
+
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid;
+    padding: 5px;
+  }
+
+  /* Style for "active" links; need to mark this :global because the router adds the class directly */
+  :global(a.active) {
+    color: red;
+  }
+</style>

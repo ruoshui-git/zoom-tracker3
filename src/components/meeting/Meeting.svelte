@@ -49,7 +49,6 @@
     await initializeTrackerData();
     initDone = true;
     connectMainClient();
-    
   });
 
   // let active = 'Home';
@@ -60,8 +59,7 @@
 </p>
 {#if connectStatus === '连接失败' || connectStatus === '未连接'}
   <button on:click={connectMainClient}
-    >再次尝试连接 Main Client（Zoom客户端）</button
-  >
+    >再次尝试连接 Main Client（Zoom客户端）</button>
 {/if}
 
 {#if $userRole === 'host' || $userRole === 'coHost'}

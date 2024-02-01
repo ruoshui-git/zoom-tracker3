@@ -3,9 +3,10 @@
 </script>
 
 <label>
-  输入姓名或拼音以筛选名单
-  <input type="text" name="filter" id="filter" bind:value={filterName} />
+  输入姓名或拼音以筛选名单 <br />
+  <input type="text" bind:value={filterName} />
 </label>
+<br />
 
 <!-- <Textfield
     variant="outlined"

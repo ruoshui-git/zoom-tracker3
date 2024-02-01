@@ -7,7 +7,8 @@ import ZoomUser from '../lib/zoomUser';
 import zoomSdk from '@zoom/appssdk';
 
 export interface EntranceHistoryItem {
-  timestamp: DateTime;
+  // timestamp: DateTime;
+  timestamp: string;
   status: 'join' | 'leave' | 'joined-before';
   user: ZoomUser;
 }
@@ -45,7 +46,8 @@ export interface EntranceHistoryItem {
 export const userRole: Writable<string> = writable('');
 
 export interface RosterRecord {
-  timestamp: DateTime;
+  // timestamp: DateTime;
+  timestamp: string;
   participants: RosterItem[];
 }
 
@@ -54,15 +56,41 @@ export interface RosterItem {
   participant: ZoomUser;
 }
 
-export interface TrackerAppData {
+export interface ITrackerAppData {
   id?: number;
-  startTime: DateTime;
-  startTimeStr: string;
-  endTime?: DateTime;
-  endTimeStr?: string;
+  startTime: string;
+  // endTime?: DateTime;
+  endTime?: string;
   entranceHistory: EntranceHistoryItem[];
   rosterRecords: RosterRecord[];
   activeSpeakerTimeline: ActiveSpeakerTimeline;
+}
+
+export class TrackerAppData implements ITrackerAppData {
+  id?: number;
+  startTime: string;
+  // endTime?: DateTime;
+  endTime?: string;
+  entranceHistory: EntranceHistoryItem[];
+  rosterRecords: RosterRecord[];
+  activeSpeakerTimeline: ActiveSpeakerTimeline;
+
+  constructor(opts: {
+    id?: number;
+    startTime: string;
+    // endTime?: DateTime,
+    endTime?: string;
+    entranceHistory: EntranceHistoryItem[];
+    rosterRecords: RosterRecord[];
+    activeSpeakerTimeline: ActiveSpeakerTimeline;
+  }) {
+    this.id = opts.id;
+    this.startTime = opts.startTime;
+    this.endTime = opts.endTime;
+    this.entranceHistory = opts.entranceHistory;
+    this.rosterRecords = opts.rosterRecords;
+    this.activeSpeakerTimeline = opts.activeSpeakerTimeline;
+  }
 }
 
 export interface ActiveSpeakerTimeline {
@@ -70,7 +98,7 @@ export interface ActiveSpeakerTimeline {
 }
 
 // export const trackerData: PersistentStore<TrackerAppData | undefined> = persist(writable(), createLocalStorage(), 'tracker-app-data');
-export const trackerData: Writable<TrackerAppData | null> = persisted(
+export const trackerData: Writable<ITrackerAppData | null> = persisted(
   'tracker-app-data',
   null
 );
@@ -84,13 +112,13 @@ export async function initializeTrackerData() {
   isInitializingAppData.set(true);
 
   trackerData.set({
-    startTime: DateTime.now(),
-    startTimeStr: DateTime.now().toLocal().toISO()!.toString(),
+    // startTime: DateTime.now(),
+    startTime: DateTime.now().toLocal().toISO()!,
     // Set initial value to participants joined before,
     entranceHistory: (await zoomSdk.getMeetingParticipants()).participants.map(
       (p) => {
         return {
-          timestamp: DateTime.now(),
+          timestamp: DateTime.now().toISO()!,
           status: 'joined-before',
           user: new ZoomUser(p.participantUUID, p.screenName, p.role),
         };
@@ -117,7 +145,9 @@ export async function initializeTrackerData() {
           ...d.entranceHistory,
           ...pChangeEvent.participants.map((participant) => {
             return {
-              timestamp: DateTime.fromSeconds(pChangeEvent.timestamp).toLocal(),
+              timestamp: DateTime.fromSeconds(pChangeEvent.timestamp)
+                .toLocal()
+                .toISO()!,
               status: participant.status,
               user: new ZoomUser(
                 participant.participantUUID,

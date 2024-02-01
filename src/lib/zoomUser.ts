@@ -1,5 +1,5 @@
 import pinyin from 'tiny-pinyin';
-import type { EntranceHistoryItem } from '../stores/zoom';
+import type { EntranceHistoryItem, RosterItem } from '../stores/zoom';
 
 /**
  * Represents a Zoom Meeting participant.
@@ -38,13 +38,13 @@ export default class ZoomUser {
  * @returns filtered array of ZoomUser's
  */
 export function filterUsersByName(
-  users: ZoomUser[],
+  users: RosterItem[],
   filterName: string
-): ZoomUser[] {
+): RosterItem[] {
   const name = filterName.trim();
   if (name) {
     return users.filter((p) => {
-      return p.matchesName(name);
+      return p.participant.matchesName(name);
     });
   } else {
     return users;

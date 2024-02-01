@@ -78,7 +78,11 @@ const headers = {
         'https://1.www.s81c.com',
         process.env.NODE_ENV !== 'production' ? `'unsafe-inline'` : undefined,
       ],
-      scriptSrc: ["'self'", 'https://appssdk.zoom.us/sdk.min.js'],
+      scriptSrc: [
+        "'self'",
+        'https://appssdk.zoom.us/sdk.min.js',
+        process.env.NODE_ENV !== 'production' ? 'https://unpkg.com' : undefined,
+      ],
       imgSrc: ["'self'", `https://${redirectHost}`, `https://*`],
       'connect-src': ['self', 'https:', 'wss:'],
       'base-uri': 'self',

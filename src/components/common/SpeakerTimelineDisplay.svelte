@@ -16,13 +16,7 @@
   </tr>
   {#each timeline.timeline as event}
     <tr>
-      <td
-        >{DateTime.fromSeconds(event.timestamp)
-          .toLocal()
-          .toISO()
-          ?.toString()
-          .replace('T', '  ')}</td
-      >
+      <td>{DateTime.fromSeconds(event.timestamp).toLocal().toISO()}</td>
       <td>
         {event.users.map((u) => u.screenName).join(', ')}
       </td>

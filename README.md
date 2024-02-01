@@ -8,6 +8,7 @@ Client:
 
 Meeting:
 1. collpase section when not using
+2. ask the user whether to start a new record or continue with the previous
 
 Common:
 1. filter & sort data
