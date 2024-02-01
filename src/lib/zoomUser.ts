@@ -1,10 +1,17 @@
 import pinyin from 'tiny-pinyin';
 import type { EntranceHistoryItem, RosterItem } from '../stores/zoom';
 
+export interface IZoomUser {
+  participantUUID: string;
+  screenName: string;
+  screenNamePinyin: string;
+  role: string;
+}
+
 /**
  * Represents a Zoom Meeting participant.
  */
-export default class ZoomUser {
+export default class ZoomUser implements IZoomUser {
   participantUUID: string;
   screenName: string;
   screenNamePinyin: string;
@@ -32,6 +39,18 @@ export default class ZoomUser {
 }
 
 /**
+ * Checks whether current `user`'s name matches the given `name`.
+ * @returns `true` if current user's name or pinyin contains the query string
+ */
+function userMatchesName(user: IZoomUser, name: string): boolean {
+  const lowerName = name.trim().toLowerCase();
+  return (
+    user.screenName.toLocaleLowerCase().includes(lowerName) ||
+    user.screenNamePinyin.includes(lowerName)
+  );
+}
+
+/**
  * Filter an array of ZoomUser's based on a given string (name or pinyin)
  * @param users
  * @param filterName Can be either the name itself or the Pinyin representation
@@ -44,7 +63,8 @@ export function filterUsersByName(
   const name = filterName.trim();
   if (name) {
     return users.filter((p) => {
-      return p.participant.matchesName(name);
+      return userMatchesName(p.participant, name);
+      // return p.participant.matchesName(name);
     });
   } else {
     return users;
@@ -58,7 +78,8 @@ export function filterEntranceHistoryByName(
   const name = filterName.trim();
   if (name) {
     return history.filter((e) => {
-      return e.user.matchesName(name);
+      // return e.user.matchesName(name);
+      return userMatchesName(e.user, name);
     });
   } else {
     return history;

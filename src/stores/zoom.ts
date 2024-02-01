@@ -66,32 +66,32 @@ export interface ITrackerAppData {
   activeSpeakerTimeline: ActiveSpeakerTimeline;
 }
 
-export class TrackerAppData implements ITrackerAppData {
-  id?: number;
-  startTime: string;
-  // endTime?: DateTime;
-  endTime?: string;
-  entranceHistory: EntranceHistoryItem[];
-  rosterRecords: RosterRecord[];
-  activeSpeakerTimeline: ActiveSpeakerTimeline;
+// export class TrackerAppData implements ITrackerAppData {
+//   id?: number;
+//   startTime: string;
+//   // endTime?: DateTime;
+//   endTime?: string;
+//   entranceHistory: EntranceHistoryItem[];
+//   rosterRecords: RosterRecord[];
+//   activeSpeakerTimeline: ActiveSpeakerTimeline;
 
-  constructor(opts: {
-    id?: number;
-    startTime: string;
-    // endTime?: DateTime,
-    endTime?: string;
-    entranceHistory: EntranceHistoryItem[];
-    rosterRecords: RosterRecord[];
-    activeSpeakerTimeline: ActiveSpeakerTimeline;
-  }) {
-    this.id = opts.id;
-    this.startTime = opts.startTime;
-    this.endTime = opts.endTime;
-    this.entranceHistory = opts.entranceHistory;
-    this.rosterRecords = opts.rosterRecords;
-    this.activeSpeakerTimeline = opts.activeSpeakerTimeline;
-  }
-}
+//   constructor(opts: {
+//     id?: number;
+//     startTime: string;
+//     // endTime?: DateTime,
+//     endTime?: string;
+//     entranceHistory: EntranceHistoryItem[];
+//     rosterRecords: RosterRecord[];
+//     activeSpeakerTimeline: ActiveSpeakerTimeline;
+//   }) {
+//     this.id = opts.id;
+//     this.startTime = opts.startTime;
+//     this.endTime = opts.endTime;
+//     this.entranceHistory = opts.entranceHistory;
+//     this.rosterRecords = opts.rosterRecords;
+//     this.activeSpeakerTimeline = opts.activeSpeakerTimeline;
+//   }
+// }
 
 export interface ActiveSpeakerTimeline {
   timeline: OnActiveSpeakerChangeEvent[];

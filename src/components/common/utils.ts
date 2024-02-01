@@ -10,7 +10,10 @@ export async function handleEndRecord() {
     const now = DateTime.now();
     // d.endTime = now;
     d.endTime = now.toISO()!;
+    // await db.trackerDataTb.add(d);
+    // const encapsulated = Tson.encapsulate(d);
     await db.trackerDataTb.add(d);
+    // console.log('encapsulated:', encapsulated);
     trackerData.set(null);
   }
 }

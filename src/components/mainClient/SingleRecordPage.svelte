@@ -36,6 +36,10 @@
     return await db.trackerDataTb.toArray();
   });
 
+  // $: revivedRecord = $dbRecord
+  //   ? $dbRecord.map((r) => Tson.revive(r))
+  //   : undefined;
+
   onMount(() => {
     console.log(`SingleRecordPage loaded!`);
   });

@@ -1,8 +1,6 @@
 import Dexie, { type Table } from 'dexie';
-import { Typeson } from 'typeson';
 
-import { TrackerAppData, type ITrackerAppData } from '../stores/zoom';
-import ZoomUser from '../lib/zoomUser';
+import { type ITrackerAppData } from '../stores/zoom';
 
 if (process.env.NODE_ENV !== 'production') {
   Dexie.debug = true;
@@ -19,13 +17,13 @@ export class MySubClassedDexie extends Dexie {
       trackerDataTb: '++id, startTime, endTime, [id+startTime+endTime]', // Primary key and indexed props
       rosterRecords: null,
     });
-    this.trackerDataTb.mapToClass(TrackerAppData);
+    // this.trackerDataTb.mapToClass(TrackerAppData);
   }
 }
 
-export const Tson = new Typeson().register({
-  TrackerAppData,
-  ZoomUser,
-});
+// export const Tson = new Typeson().register({
+//   TrackerAppData,
+//   ZoomUser,
+// });
 
 export const db = new MySubClassedDexie();
