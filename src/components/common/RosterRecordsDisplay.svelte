@@ -80,13 +80,26 @@
   .drawer-container {
     position: relative;
     display: flex;
-    height: 350px;
-    max-width: 600px;
+    /* height: 350px; */
+    /* width: 550px; */
     border: 1px solid
       var(--mdc-theme-text-hint-on-background, rgba(0, 0, 0, 0.1));
     overflow: hidden;
     z-index: 0;
-    /* resize: horizontal; */
+    resize: both;
+
+    /* border: 1px solid; */
+    /* padding: 5px; */
+    /* resize: both; */
+    min-height: 50vh;
+    max-height: 90vh;
+    /* display: flex; */
+    /* justify-content: center; */
+    /* overflow: auto; */
+    min-width: fit-content;
+    max-width: 80vw;
+    width: 75vw;
+    height: 80vh;
   }
 
   * :global(.app-content) {
