@@ -45,6 +45,7 @@
     max-height: 90vh;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     overflow: auto;
     min-width: fit-content;
     max-width: 80vw;

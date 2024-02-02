@@ -1,9 +1,21 @@
 <script lang="ts">
+  import { filterEntranceHistoryByName } from '../../lib/zoomUser';
   import type { EntranceHistoryItem } from '../../stores/zoom';
+  import FilterInput from '../FilterInput.svelte';
   export let entranceHistory: EntranceHistoryItem[];
+
+  let filterName = '';
+
+  $: filteredHistory =
+    entranceHistory === undefined || entranceHistory.length === 0
+      ? []
+      : filterEntranceHistoryByName(entranceHistory, filterName);
 </script>
 
 <h3>进出记录</h3>
+
+<FilterInput bind:filterName />
+
 <main>
   <table>
     <tr>
@@ -12,7 +24,7 @@
       <th scope="col">姓名</th>
       <th scope="col">状态</th>
     </tr>
-    {#each entranceHistory as e, i}
+    {#each filteredHistory as e, i}
       <tr>
         <th scope="row">{i + 1}</th>
         <td>{e.timestamp}</td>
@@ -46,8 +58,9 @@
     max-height: 90vh;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     overflow: auto;
-    min-width: fit-content;
+    min-width: 50vh;
     max-width: 80vw;
     width: 75vw;
     height: 80vh;
