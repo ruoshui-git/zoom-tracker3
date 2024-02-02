@@ -14,22 +14,18 @@
   import RecordsRouter from './RecordsRouter.svelte';
 
   let hasMeetingConnected = false;
+  let startDateFilterText = DateTime.now().toLocal().toFormat('yyyy-LL');
 
-  const dbIndexes = liveQuery(async () => {
+  $: dbIndexes = liveQuery(async () => {
     // return await db.trackerDataTb.toCollection().keys();
-    return await db.trackerDataTb.orderBy('[id+startTime+endTime]').keys();
+    return await db.trackerDataTb
+      .orderBy('[id+startTime+endTime]')
+      .reverse()
+      .filter((d) => d.startTime.startsWith(startDateFilterText))
+      .keys();
   });
 
   $: console.log(`dbindexes from Client.svelte: ${$dbIndexes}`);
-
-  // let dbRecord = liveQuery(async () => {
-  //   return db.trackerDataTb.get($params?.id);
-  //   // return db.trackerDataTb.get(1);
-  // });
-  // $: {
-  //   console.log(`dbrecord from Client.svelte: ${$dbRecord}`);
-  //   console.log(db);
-  // }
 
   let connectionStatus = '';
 
@@ -69,6 +65,14 @@
 
 <hr />
 <h2>前期记录</h2>
+
+<div class="date-filter">
+  <label>
+    输入开始日期以筛选记录 <br />
+    <input type="text" bind:value={startDateFilterText} />
+  </label>
+</div>
+
 {#if $dbIndexes && $dbIndexes.join('')}
   <table>
     <thead>
@@ -83,14 +87,21 @@
         <tr>
           <td><a href={`/client/records/${id}`} use:link use:active>{id}</a></td
           >
-          <td><a href={`/client/records/${id}`} use:link use:active>{startTime}</a></td>
-          <td><a href={`/client/records/${id}`} use:link use:active>{endTime}</a></td>
+          <td
+            ><a href={`/client/records/${id}`} use:link use:active
+              >{startTime}</a
+            ></td
+          >
+          <td
+            ><a href={`/client/records/${id}`} use:link use:active>{endTime}</a
+            ></td
+          >
         </tr>
       {/each}
     </tbody>
   </table>
 {:else}
-  <p>暂无前期记录</p>
+  <p>无记录</p>
 {/if}
 
 <!-- {#if $dbRecord}
@@ -105,6 +116,11 @@
   td {
     border: 1px solid;
     padding: 5px;
+  }
+
+  .date-filter {
+    display: block;
+    margin: 1% 0;
   }
 
   /* Style for "active" links; need to mark this :global because the router adds the class directly */
