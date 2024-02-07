@@ -3,13 +3,31 @@ import { writable, type Writable } from 'svelte/store';
 import { persisted } from 'svelte-persisted-store';
 import { type OnActiveSpeakerChangeEvent } from '@zoom/appssdk';
 import { DateTime } from 'luxon';
-import ZoomUser from '../lib/zoomUser';
+import ZoomUser, { WaitingRoomUser } from '../lib/zoomUser';
 import zoomSdk from '@zoom/appssdk';
+
+export enum EntranceHistoryItemStatus {
+  Join = '进入',
+  Leave = '离开',
+  JoinedBefore = '已进入',
+  WaitingRoomJoin_JoinMeeting = '进入等候室',
+  WaitingRoomJoin_PutFromMeeting = '被踢到等候室',
+  WaitingRoomLeave = '退出等候室',
+  WaitingRoomJoinedBefore = '已进入等候室',
+}
 
 export interface EntranceHistoryItem {
   // timestamp: DateTime;
   timestamp: string;
-  status: 'join' | 'leave' | 'joined-before';
+  // status:
+  //   | 'join'
+  //   | 'leave'
+  //   | 'joined-before'
+  //   | 'waiting-room-join-joinMeeting'
+  //   | 'waiting-room-join-putFromMainMeeting'
+  //   | 'waiting-room-leave'
+  //   | 'waiting-room-joined-before';
+  status: EntranceHistoryItemStatus;
   user: ZoomUser;
 }
 
@@ -115,15 +133,22 @@ export async function initializeTrackerData() {
     // startTime: DateTime.now(),
     startTime: DateTime.now().toLocal().toISO()!,
     // Set initial value to participants joined before,
-    entranceHistory: (await zoomSdk.getMeetingParticipants()).participants.map(
-      (p) => {
+    entranceHistory: [
+      ...(await zoomSdk.getMeetingParticipants()).participants.map((p) => {
         return {
           timestamp: DateTime.now().toISO()!,
-          status: 'joined-before',
+          status: EntranceHistoryItemStatus.JoinedBefore,
           user: new ZoomUser(p.participantUUID, p.screenName, p.role),
         };
-      }
-    ),
+      }),
+      ...(await zoomSdk.getWaitingRoomParticipants()).participants.map((p) => {
+        return {
+          timestamp: DateTime.now().toISO()!,
+          status: EntranceHistoryItemStatus.WaitingRoomJoinedBefore,
+          user: new WaitingRoomUser(p.participantUUID, p.screenName, p.role),
+        };
+      }),
+    ],
     rosterRecords: [],
     activeSpeakerTimeline: { timeline: [] },
   });
@@ -148,7 +173,10 @@ export async function initializeTrackerData() {
               timestamp: DateTime.fromSeconds(pChangeEvent.timestamp)
                 .toLocal()
                 .toISO()!,
-              status: participant.status,
+              status:
+                participant.status === 'join'
+                  ? EntranceHistoryItemStatus.Join
+                  : EntranceHistoryItemStatus.Leave,
               user: new ZoomUser(
                 participant.participantUUID,
                 participant.screenName,
@@ -156,6 +184,57 @@ export async function initializeTrackerData() {
               ),
             };
           }),
+        ];
+        d.entranceHistory = newEntranceHistory;
+        return d;
+      } else {
+        return null;
+      }
+    });
+  });
+
+  zoomSdk.onWaitingRoomParticipantJoin((pChangeEvent) => {
+    trackerData.update((d) => {
+      if (d) {
+        const newEntranceHistory = [
+          ...d.entranceHistory,
+          {
+            timestamp: DateTime.fromSeconds(pChangeEvent.timestamp)
+              .toLocal()
+              .toISO()!,
+            status:
+              pChangeEvent.participant.action === 'joinMeeting'
+                ? EntranceHistoryItemStatus.WaitingRoomJoin_JoinMeeting
+                : EntranceHistoryItemStatus.WaitingRoomJoin_PutFromMeeting,
+            user: new WaitingRoomUser(
+              pChangeEvent.participant.participantUUID,
+              pChangeEvent.participant.screenName
+            ),
+          },
+        ];
+        d.entranceHistory = newEntranceHistory;
+        return d;
+      } else {
+        return null;
+      }
+    });
+  });
+
+  zoomSdk.onWaitingRoomParticipantLeave((pChangeEvent) => {
+    trackerData.update((d) => {
+      if (d) {
+        const newEntranceHistory = [
+          ...d.entranceHistory,
+          {
+            timestamp: DateTime.fromSeconds(pChangeEvent.timestamp)
+              .toLocal()
+              .toISO()!,
+            status: EntranceHistoryItemStatus.WaitingRoomLeave,
+            user: new WaitingRoomUser(
+              pChangeEvent.participant.participantUUID,
+              pChangeEvent.participant.screenName
+            ),
+          },
         ];
         d.entranceHistory = newEntranceHistory;
         return d;

@@ -6,7 +6,7 @@
   import SpeakerTimelineDisplay from './SpeakerTimelineDisplay.svelte';
   import { DateTime } from 'luxon';
 
-  export let trackerData: ITrackerAppData | undefined;
+  export let trackerData: ITrackerAppData | undefined | null;
 
   $: console.debug(trackerData);
 
@@ -21,8 +21,7 @@
 
   $: if (trackerData) {
     startTime = DateTime.fromISO(trackerData.startTime);
-    if (trackerData.endTime)
-      endTime = DateTime.fromISO(trackerData.endTime);
+    if (trackerData.endTime) endTime = DateTime.fromISO(trackerData.endTime);
   }
 </script>
 

@@ -12,8 +12,8 @@ dependencies:
     specifier: ^2.4.1
     version: 2.4.1(svelte@4.2.2)
   '@zoom/appssdk':
-    specifier: ^0.16.15
-    version: 0.16.15
+    specifier: ^0.16.17
+    version: 0.16.17
   axios:
     specifier: ^1.6.1
     version: 1.6.1(debug@4.3.4)
@@ -1864,8 +1864,8 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@zoom/appssdk@0.16.15:
-    resolution: {integrity: sha512-LKoMIycciadR2OyOHWp0kaSzeNP33CQ6vB12GueZgPX4mp2RPHFGCTn4ACeXt8zg42zGqqdGN8yQ+4HBSAe9dA==}
+  /@zoom/appssdk@0.16.17:
+    resolution: {integrity: sha512-2kSnUPjHyPbFvGoBP0+yy7XYgIuxejtpMfJ3g8sknT1flD6H3PeTqiwINDcaELnYMRhuiPceTPM2X891tUSSkA==}
     dev: false
 
   /abbrev@1.1.1:

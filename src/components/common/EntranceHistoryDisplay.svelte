@@ -30,11 +30,7 @@
         <td>{e.timestamp}</td>
         <td>{e.user.screenName}</td>
         <td
-          >{e.status === 'join'
-            ? '进入'
-            : e.status === 'joined-before'
-            ? '已进入'
-            : '离开'}</td
+          >{e.status}</td
         >
       </tr>
     {/each}
