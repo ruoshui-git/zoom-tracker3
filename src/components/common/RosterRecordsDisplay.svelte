@@ -53,6 +53,7 @@
               e.preventDefault();
               currentIndex = i;
             }}
+            activated={currentIndex === i}
           >
             <Text>{roster.timestamp}</Text>
           </Item>
