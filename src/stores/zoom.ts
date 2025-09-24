@@ -1,5 +1,4 @@
 import { writable, type Writable } from 'svelte/store';
-// import { persist, createLocalStorage, type PersistentStore } from "@macfja/svelte-persistent-store";
 import { persisted } from 'svelte-persisted-store';
 import { type OnActiveSpeakerChangeEvent } from '@zoom/appssdk';
 import { DateTime } from 'luxon';
